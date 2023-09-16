@@ -1,5 +1,6 @@
 import sys
 import requests
+import sqlite3
 import pandas as pd
 from bs4 import BeautifulSoup
 
@@ -21,4 +22,40 @@ def get_html_data(urlpath: str):
 	for script in soup(["script", "style"]):
 	    script.extract()
 	return soup.body.get_text(separator='\n', strip=True)
+
+def save_documents_to_db(documents: list, dbname: str):
+	con = sqlite3.connect(dbname)
+	cur = con.cursor()
+	cur.execute("CREATE TABLE IF NOT EXISTS documents(document_id, document)")
+	for i, document in enumerate(documents):
+		cur.execute("INSERT INTO documents VALUES(?, ?)", (i, document))
+	con.commit()
+	con.close()
+
+def save_topics_to_db(topics: list, dbname: str):
+	con = sqlite3.connect(dbname)
+	cur = con.cursor()
+	cur.execute("CREATE TABLE IF NOT EXISTS lda_topics(topic_id, topic)")
+	for i, topic in enumerate(topics):
+		cur.execute("INSERT INTO lda_topics VALUES(?, ?)", (i, ' '.join(topic)))
+	con.commit()
+	con.close()
+	
+def save_assignments_to_db(assignments: list, dbname: str):
+	con = sqlite3.connect(dbname)
+	cur = con.cursor()
+	cur.execute("CREATE TABLE IF NOT EXISTS assigned_topics(document_id, topic_id, FOREIGN KEY (document_id) REFERENCES documents(document_id), FOREIGN KEY (topic_id) REFERENCES lda_topics(topic_id))")
+	
+	insert_rows = ()
+	for idx, topic_idx in enumerate(assignments):
+		cur.execute("INSERT INTO assigned_topics VALUES(?, ?)", (idx, int(topic_idx)))
+	con.commit()
+	con.close()
+
+def get_topic_assignments_from_db(dbname: str):
+	con = sqlite3.connect(dbname)
+	cur = con.cursor()
+	res = cur.exceute("SELECT documents.document AND lda_topics.topic FROM document, lda_topics, assigned_topics WHERE document.document_id = assigned_topics.document_id AND topics.topic_id = assigned_topics.topic_id")
+	return res.fetchall()
+
 	
