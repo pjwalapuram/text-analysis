@@ -11,10 +11,11 @@ def get_csv_data(filepath: str, columns: list = None) -> pd.DataFrame:
 	else:
 		return rows
 
-def concatenate_columns(rows: list, merge_columns: list) -> pd.DataFrame:
-	rows["merged_text"] = rows[merge_columns].apply(lambda row: ' '.join(row.values.astype(str)), axis=1)
-	return rows
-
+def concatenate_columns(rows: list, concat_columns: list) -> pd.DataFrame:
+	all_rows = []
+	for columns in concat_columns:
+		all_rows.extend(rows[columns])
+	return all_rows
 
 def get_html_data(urlpath: str):
 	response = requests.get(urlpath)
