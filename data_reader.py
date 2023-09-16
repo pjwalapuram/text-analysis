@@ -20,7 +20,7 @@ def get_html_data(urlpath: str):
 	response = requests.get(urlpath)
 	soup = BeautifulSoup(response.text, features='html.parser')
 	for script in soup(["script", "style"]):
-	    script.extract()
+		script.extract()
 	return soup.body.get_text(separator='\n', strip=True)
 
 def save_documents_to_db(documents: list, dbname: str):
@@ -29,6 +29,24 @@ def save_documents_to_db(documents: list, dbname: str):
 	cur.execute("CREATE TABLE IF NOT EXISTS documents(document_id, document)")
 	for i, document in enumerate(documents):
 		cur.execute("INSERT INTO documents VALUES(?, ?)", (i, document))
+	con.commit()
+	con.close()
+
+def save_sentiments_to_db(sentiments: list, dbname: str):
+	con = sqlite3.connect(dbname)
+	cur = con.cursor()
+	cur.execute("CREATE TABLE IF NOT EXISTS sentiment_analysis(document_id, text_id, sentiment, FOREIGN KEY (document_id) REFERENCES documents(document_id))")
+	for i, sentiment in enumerate(sentiments):
+		cur.execute("INSERT INTO sentiment_analysis VALUES(?, ?, ?)", (i, sentiment[0], sentiment[1]))
+	con.commit()
+	con.close()
+
+def save_additional_field_to_db(fieldvalues: tuple, dbname: str):
+	con = sqlite3.connect(dbname)
+	cur = con.cursor()
+	cur.execute("CREATE TABLE IF NOT EXISTS additional_fields(document_id, fieldname, fieldvalue, FOREIGN KEY (document_id) REFERENCES documents(document_id))")
+	for i, fieldname, fieldvalue in enumerate(fieldvalues):
+		cur.execute("INSERT INTO additional_fields VALUES(?, ?, ?)", (i, fieldname, fieldvalue))
 	con.commit()
 	con.close()
 
