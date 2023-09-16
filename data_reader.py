@@ -21,13 +21,14 @@ def get_html_data(urlpath: str):
 	soup = BeautifulSoup(response.text, features='html.parser')
 	for script in soup(["script", "style"]):
 		script.extract()
-	return soup.body.get_text(separator='\n', strip=True)
+	return soup.get_text()
 
 def save_documents_to_db(documents: list, dbname: str):
 	con = sqlite3.connect(dbname)
 	cur = con.cursor()
 	cur.execute("CREATE TABLE IF NOT EXISTS documents(document_id, text_id, document)")
 	for i, document in enumerate(documents):
+		print(i, document[0], document[1])
 		cur.execute("INSERT INTO documents VALUES(?, ?, ?)", (i, document[0], document[1]))
 	con.commit()
 	con.close()
