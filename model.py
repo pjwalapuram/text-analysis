@@ -1,4 +1,5 @@
 import sqlite3
+import time
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.decomposition import LatentDirichletAllocation
 
@@ -9,8 +10,12 @@ class LDA:
 		self.model = LatentDirichletAllocation(**kwargs)
 	
 	def fit_model(self):
+		print("Running Model...")
+		start = time.time()
 		self.lda_matrix = self.model.fit_transform(self.vectorized_texts)
 		self.lda_components = self.model.components_
+		end = time.time()
+		print("Done, took {} seconds".format(round(end-start, 2)))
 
 	def get_topics(self, top_k: int) -> list:
 		all_topic_terms = []
