@@ -1,7 +1,8 @@
-import data_reader
+import src.data_reader as data_reader
+import src.database as database
 import sqlite3
-from model import LDA
-from preprocess import Preprocess
+from src.model import LDA
+from src.preprocess import Preprocess
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import Optional
@@ -30,10 +31,10 @@ def read_html(params: Params):
 
     preprocessor = Preprocess(data)
     preprocessor.lemmatize_and_filter()
-    data_reader.save_documents_to_db(preprocessor.sentences, params.db_name)
+    database.save_documents_to_db(preprocessor.sentences, params.db_name)
     
     sentiments = preprocessor.get_sentiment()
-    data_reader.save_sentiments_to_db(sentiments, params.db_name)
+    database.save_sentiments_to_db(sentiments, params.db_name)
     
     vectorized_texts = preprocessor.vectorize_tfidf()
     feature_names = preprocessor.tfidf.get_feature_names_out()
@@ -41,10 +42,10 @@ def read_html(params: Params):
     build_model.fit_model()
     
     topics = build_model.get_topics(params.topics_topk_words)
-    data_reader.save_topics_to_db(topics, params.db_name)
+    database.save_topics_to_db(topics, params.db_name)
     
     assignments = build_model.get_topic_assignments()
-    data_reader.save_assignments_to_db(assignments, params.db_name)
+    database.save_assignments_to_db(assignments, params.db_name)
 
 @app.get("/return-themes/{db_name}")
 def return_extracted_themes(db_name: str = "text_analysis.db"):
