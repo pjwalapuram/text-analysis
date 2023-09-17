@@ -14,8 +14,35 @@ class Params(BaseModel):
     max_iterations: Optional[int] = 10
     topics_topk_words: Optional[int] = 10
     db_name: Optional[str] = "text_analysis.db"
+
+
+description = """
+## Text Analysis API can:
+
+* **Scrape data from HTML and infer topics**
+* **Save inferred topics, sentiments and documents to database**
+* **Retrieve**
+
+### **/extract-themes**
+* **Minimally expects URL path and can also take other parameters for topic model**
+* **Automatically runs topic modeling and sentiment analysis**
+* **Saves all data in sqlite3 database**
+
+### **/return-themes**
+* **Returns extracted themes**
+* **Specify database name if passed durng extraction or use `text_analysis.db`**
+
+### **/return-texts**
+* **Returns documents, their sentiment and assigned themes**
+* **Specify database name if passed durng extraction or use `text_analysis.db`**
+
+### **/return-documents**
+* **Returns list of extracted texts before processing**
+* **Specify database name if passed durng extraction or use `text_analysis.db`**
+"""
+
  
-app = FastAPI()
+app = FastAPI(title="Text Analysis", description=description)
 
 @app.get("/")
 def root():
