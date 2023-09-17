@@ -20,7 +20,6 @@ class Preprocess:
 		print("Preprocessing...")
 		for text in tqdm(self.texts):
 			doc = self.nlp_pipeline(text)
-			#sentences = []
 			for sentence in doc.sents:
 				sentences.append((doc_idx, sentence.text))
 				filtered_tokens = [token.lemma_.lower() for token in sentence if 
