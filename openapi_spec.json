@@ -1,0 +1,261 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Text Analysis",
+    "description": "\n## Text Analysis API can:\n\n* **Scrape data from HTML and infer topics**\n* **Save inferred topics, sentiments and documents to database**\n* **Retrieve**\n\n### **/extract-themes**\n* **Minimally expects URL path and can also take other parameters for topic model**\n* **Automatically runs topic modeling and sentiment analysis**\n* **Saves all data in sqlite3 database**\n\n### **/return-themes**\n* **Returns extracted themes**\n* **Specify database name if passed durng extraction or use `text_analysis.db`**\n\n### **/return-texts**\n* **Returns documents, their sentiment and assigned themes**\n* **Specify database name if passed durng extraction or use `text_analysis.db`**\n\n### **/return-documents**\n* **Returns list of extracted texts before processing**\n* **Specify database name if passed durng extraction or use `text_analysis.db`**\n",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Root",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/extract-themes/": {
+      "post": {
+        "summary": "Read Html",
+        "operationId": "read_html_extract_themes__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Params"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/return-themes/{db_name}": {
+      "get": {
+        "summary": "Return Extracted Themes",
+        "operationId": "return_extracted_themes_return_themes__db_name__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Db Name"
+            },
+            "name": "db_name",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/return-texts/{db_name}": {
+      "get": {
+        "summary": "Return Texts With Theme And Sentiment",
+        "operationId": "return_texts_with_theme_and_sentiment_return_texts__db_name__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Db Name"
+            },
+            "name": "db_name",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/return-documents/{db_name}": {
+      "get": {
+        "summary": "Return Saved Documents",
+        "operationId": "return_saved_documents_return_documents__db_name__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Db Name"
+            },
+            "name": "db_name",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "Params": {
+        "properties": {
+          "path": {
+            "type": "string",
+            "title": "Path"
+          },
+          "path_type": {
+            "type": "string",
+            "title": "Path Type",
+            "default": "html"
+          },
+          "num_topics": {
+            "type": "integer",
+            "title": "Num Topics",
+            "default": 5
+          },
+          "max_iterations": {
+            "type": "integer",
+            "title": "Max Iterations",
+            "default": 10
+          },
+          "topics_topk_words": {
+            "type": "integer",
+            "title": "Topics Topk Words",
+            "default": 10
+          },
+          "db_name": {
+            "type": "string",
+            "title": "Db Name",
+            "default": "text_analysis.db"
+          }
+        },
+        "type": "object",
+        "required": [
+          "path"
+        ],
+        "title": "Params"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
