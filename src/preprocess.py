@@ -22,6 +22,7 @@ class Preprocess:
 			try:
 				doc = self.nlp_pipeline(text)
 			except:
+				continue
 			for sentence in doc.sents:
 				sentences.append((doc_idx, sentence.text))
 				filtered_tokens = [token.lemma_.lower() for token in sentence if 
