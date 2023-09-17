@@ -46,7 +46,7 @@ app = FastAPI(title="Text Analysis", description=description)
 
 @app.get("/")
 def root():
-    return {"message": "Hello World"}
+    return {"message": "Welcome to Text Analysis."}
 
 
 @app.post("/extract-themes/")
