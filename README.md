@@ -11,6 +11,12 @@
 * **Minimally expects URL path and can also take other parameters for topic model**
 * **Automatically runs topic modeling and sentiment analysis**
 * **Saves all data in sqlite3 database**
+* **path: URL link**
+* **path_type: html**
+* **num_topics: Number of topics to fit for, default is 5**
+* **max_iterations: Number of iterations for the model, default=10**
+* **topics_topk_words: Number of representative words to choose per topic, default=10**
+* **db_name: Specify database name for saving, default is `text_analysis.db`**
 
 ### **/return-themes**
 * **Returns extracted themes**
